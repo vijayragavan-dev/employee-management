@@ -1,3 +1,8 @@
+# Use the following credentials to access the StaffSync Employee Management Dashboard.
+
+Email: admin@gmail.com
+
+Password: admin123
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
