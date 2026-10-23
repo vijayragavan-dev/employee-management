@@ -16,6 +16,7 @@ const initialValues = {
 
 function EmployeeForm({
   onSubmit,
+  onCancel,
   submitLabel = "Save Employee",
   initialData = null,
   originalId = null,
@@ -182,10 +183,18 @@ if (!id) {
       ))}
 
       <div className="form-actions">
-        <button className="primary-button" type="submit">
-          {submitLabel}
-        </button>
-      </div>
+  <button
+  type="button"
+  className="secondary-button"
+  onClick={onCancel}
+>
+  Cancel
+</button>
+
+  <button className="primary-button" type="submit">
+    {submitLabel}
+  </button>
+</div>
     </form>
   );
 }

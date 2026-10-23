@@ -1,17 +1,16 @@
+
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {
   Users,
   UserCheck,
   UserX,
   Building2,
-  LogOut,
-  LayoutDashboard,
 } from "lucide-react";
 
 import { getEmployees } from "../utils/localStorage";
 import { initializeEmployees } from "../utils/seedEmployees";
+import AppLayout from "../components/AppLayout";
 import "../App.css";
 
 function Dashboard() {
@@ -20,54 +19,54 @@ function Dashboard() {
   const location = useLocation();
 
   useEffect(() => {
-  initializeEmployees();
-  setEmployees(getEmployees());
-}, [location]);
+    initializeEmployees();
+    setEmployees(getEmployees());
+  }, [location]);
 
   const total = employees.length;
-  const active = employees.filter((e) => e.status === "Active").length;
-  const inactive = employees.filter((e) => e.status === "Inactive").length;
+
+  const active = employees.filter(
+    (employee) => employee.status === "Active"
+  ).length;
+
+  const inactive = employees.filter(
+    (employee) => employee.status === "Inactive"
+  ).length;
+
   const departments = new Set(
-    employees.map((e) => e.department)
+    employees.map((employee) => employee.department)
   ).size;
 
-  function handleLogout() {
-    localStorage.removeItem("isLoggedIn");
-    navigate("/login", { replace: true });
-  }
-
   const cards = [
-    { title: "Total Employees", value: total, icon: Users },
-    { title: "Active Employees", value: active, icon: UserCheck },
-    { title: "Inactive Employees", value: inactive, icon: UserX },
-    { title: "Departments", value: departments, icon: Building2 },
-  ];
+  {
+    title: "Total Employees",
+    value: total,
+    icon: Users,
+    filter: "",
+  },
+  {
+    title: "Active Employees",
+    value: active,
+    icon: UserCheck,
+    filter: "Active",
+  },
+  {
+    title: "Inactive Employees",
+    value: inactive,
+    icon: UserX,
+    filter: "Inactive",
+  },
+  {
+    title: "Departments",
+    value: departments,
+    icon: Building2,
+    filter: "departments",
+  },
+];
 
   return (
-    <div className="app-layout">
-      <aside className="sidebar">
-        <h2>Employee Management</h2>
-
-        <button className="nav-item active">
-          <LayoutDashboard size={18} />
-          Dashboard
-        </button>
-
-        <button
-          className="nav-item"
-          onClick={() => navigate("/employees")}
-        >
-          <Users size={18} />
-          Employees
-        </button>
-
-        <button className="nav-item logout" onClick={handleLogout}>
-          <LogOut size={18} />
-          Logout
-        </button>
-      </aside>
-
-      <main className="main-content">
+    <AppLayout>
+      <div className="dashboard-page">
         <header className="page-header">
           <div>
             <h1>Dashboard</h1>
@@ -83,19 +82,46 @@ function Dashboard() {
         </header>
 
         <section className="dashboard-cards">
-          {cards.map(({ title, value, icon: Icon }) => (
-            <article className="dashboard-card" key={title}>
-              <div className="card-icon">
-                <Icon size={24} />
-              </div>
-              <p>{title}</p>
-              <h2>{value}</h2>
-            </article>
-          ))}
+          {cards.map(({ title, value, icon: Icon, filter }) => (
+  <article
+    className="dashboard-card clickable-card"
+    key={title}
+    role="button"
+    tabIndex={0}
+    onClick={() => {
+      if (filter === "departments") {
+        navigate("/employees?view=departments");
+      } else if (filter) {
+        navigate(`/employees?status=${filter}`);
+      } else {
+        navigate("/employees");
+      }
+    }}
+    onKeyDown={(event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        if (filter === "departments") {
+          navigate("/employees?view=departments");
+        } else if (filter) {
+          navigate(`/employees?status=${filter}`);
+        } else {
+          navigate("/employees");
+        }
+      }
+    }}
+  >
+    <div className="card-icon">
+      <Icon size={24} />
+    </div>
+    <p>{title}</p>
+    <h2>{value}</h2>
+  </article>
+))}
         </section>
 
         <section className="welcome-panel">
           <h2>Employee Overview</h2>
+
           <p>
             Manage employee information, view records, and track
             workforce statistics from one place.
@@ -108,8 +134,8 @@ function Dashboard() {
             View Employees
           </button>
         </section>
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 }
 

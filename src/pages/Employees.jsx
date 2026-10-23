@@ -1,13 +1,33 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Eye, Pencil, Trash2, Plus, Download } from "lucide-react";
+import Toast from "../components/Toast";
 
-import { getEmployees, deleteEmployee } from "../utils/localStorage";
+import AppLayout from "../components/AppLayout";
+import EmployeeForm from "../components/EmployeeForm";
+import EmployeeModal from "../components/EmployeeModal";
+
+import {
+  getEmployees,
+  addEmployee,
+  updateEmployee,
+  deleteEmployee,
+} from "../utils/localStorage";
+
+import {
+  Eye,
+  Pencil,
+  Trash2,
+  Plus,
+  Download,
+} from "lucide-react";
+
 import "../App.css";
 
 function Employees() {
   const navigate = useNavigate();
+  const [modalMode, setModalMode] = useState(null);
+const [editingEmployee, setEditingEmployee] = useState(null);
   const [employees, setEmployees] = useState([]);
   const [search, setSearch] = useState("");
   const [department, setDepartment] = useState("All");
@@ -82,6 +102,23 @@ function Employees() {
     (page - 1) * pageSize,
     page * pageSize
   );
+  function handleEmployeeSubmit(employee) {
+  let result;
+
+  if (modalMode === "edit" && editingEmployee) {
+    result = updateEmployee(editingEmployee.id, employee);
+  } else {
+    result = addEmployee(employee);
+  }
+
+  setMessage(result.message);
+
+  if (result.success) {
+    setModalMode(null);
+    setEditingEmployee(null);
+    refreshEmployees();
+  }
+}
 
   function confirmDelete() {
     if (!deleteTarget) return;
@@ -135,7 +172,7 @@ function Employees() {
   }
 
   return (
-    <main className="main-content">
+    <AppLayout>
       <header className="page-header">
         <div>
           <h1>Employees</h1>
@@ -144,7 +181,11 @@ function Employees() {
 
         <button
           className="primary-button"
-          onClick={() => navigate("/employees/add")}
+          onClick={() => {
+            setEditingEmployee(null);
+            setModalMode("add");
+          }
+        }
         >
           <Plus size={17} /> Add Employee
         </button>
@@ -247,7 +288,11 @@ function Employees() {
                         className="icon-button"
                         title="Edit employee"
                         aria-label={`Edit ${employee.name}`}
-                        onClick={() => navigate(`/employees/edit/${employee.id}`)}
+                        onClick={() => {
+                          setEditingEmployee(employee);
+                          setModalMode("edit");
+                        }
+                      }
                       >
                         <Pencil size={17} />
                       </button>
@@ -330,7 +375,35 @@ function Employees() {
           </section>
         </div>
       )}
-    </main>
+      {modalMode && (
+  <EmployeeModal
+    title={modalMode === "add" ? "Add Employee" : "Edit Employee"}
+    onClose={() => {
+      setModalMode(null);
+      setEditingEmployee(null);
+    }}
+  >
+    <EmployeeForm
+      key={modalMode + (editingEmployee?.id || "new")}
+      initialData={editingEmployee}
+      originalId={editingEmployee?.id || null}
+      onSubmit={handleEmployeeSubmit}
+      onCancel={() => {
+        setModalMode(null);
+        setEditingEmployee(null);
+      }}
+      submitLabel={
+        modalMode === "add" ? "Save Employee" : "Update Employee"
+      }
+    />
+  </EmployeeModal>
+)}
+<Toast
+  message={message}
+  type="success"
+  onClose={() => setMessage("")}
+/>
+    </AppLayout>
   );
 }
 

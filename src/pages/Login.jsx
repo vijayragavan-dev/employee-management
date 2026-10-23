@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -27,35 +28,65 @@ function Login() {
   }
 
   return (
-    <div style={{ maxWidth: "400px", margin: "80px auto", padding: "24px" }}>
-      <h1>Employee Management</h1>
-      <h2>Login</h2>
+    <div className="login-page">
+      <div className="login-card">
+        <div className="login-brand">
+          <div className="login-logo">S</div>
+          <h1>StaffSync</h1>
+          <p>Employee Management System</p>
+        </div>
 
-      <form onSubmit={handleLogin}>
-        <label htmlFor="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-          style={{ display: "block", width: "100%", padding: "10px", margin: "8px 0 16px" }}
-        />
+        <div className="login-heading">
+          <h2>Welcome back</h2>
+          <p>Sign in to access your admin dashboard.</p>
+        </div>
 
-        <label htmlFor="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          style={{ display: "block", width: "100%", padding: "10px", margin: "8px 0 16px" }}
-        />
+        <form onSubmit={handleLogin} className="login-form">
+          <div className="login-field">
+            <label htmlFor="email">Email Address</label>
+            <input
+              id="email"
+              type="email"
+              placeholder="admin@gmail.com"
+              value={email}
+              onChange={(e) => {
+                setEmail(e.target.value);
+                setError("");
+              }}
+              required
+            />
+          </div>
 
-        {error && <p style={{ color: "red" }}>{error}</p>}
+          <div className="login-field">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                setError("");
+              }}
+              required
+            />
+          </div>
 
-        <button type="submit">Login</button>
-      </form>
+          {error && (
+            <p className="login-error" role="alert">
+              {error}
+            </p>
+          )}
+
+          <button type="submit" className="login-button">
+            Sign In
+          </button>
+        </form>
+
+        <p className="login-footer">
+          StaffSync · Simplifying Employee Management
+        </p>
+      </div>
     </div>
   );
 }
