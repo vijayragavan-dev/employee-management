@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import {
@@ -63,30 +62,21 @@ function AppLayout({ children }) {
         </main>
       </div>
 
-      <div className="form-actions">
-  <button
-    type="button"
-    className="secondary-button"
-    onClick={() => setShowLogout(false)}
-  >
-    Cancel
-  </button>
-
-  <button
-    type="button"
-    className="primary-button"
-    onClick={handleLogout}
-  >
-    Confirm
-  </button>
-</div>
+      {showLogout && (
         <div className="modal-backdrop">
-          <section className="confirm-modal" role="dialog" aria-modal="true">
-            <h2>Confirm Logout</h2>
+          <section
+            className="confirm-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="logout-title"
+          >
+            <h2 id="logout-title">Confirm Logout</h2>
+
             <p>Are you sure you want to log out?</p>
 
             <div className="form-actions">
               <button
+                type="button"
                 className="secondary-button"
                 onClick={() => setShowLogout(false)}
               >
@@ -94,6 +84,7 @@ function AppLayout({ children }) {
               </button>
 
               <button
+                type="button"
                 className="primary-button"
                 onClick={handleLogout}
               >
